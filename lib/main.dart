@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'gallery.dart';
+import 'drawer.dart'; // เพิ่ม import
 
 void main() {
   runApp(const MainApp());
@@ -9,7 +12,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     final imageList = <String>[
       'assets/images/tr1.jpg',
       'assets/images/tr2.jpg',
@@ -23,15 +25,49 @@ class MainApp extends StatelessWidget {
       'assets/images/tr10.jpg',
     ];
 
-    return MaterialApp(
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      getPages: [
+        GetPage(
+          name: '/',
+          page: () => const MainApp(), // หรือเปลี่ยนเป็นหน้า Home ก็ได้
+        ),
+        GetPage(
+          name: '/allimages',
+          page: () => GalleryPage(imageList: Get.arguments ?? []),
+        ),
+      ],
       home: Scaffold(
         appBar: AppBar(
           title: const Text("My list views app"),
           backgroundColor: const Color.fromARGB(255, 249, 141, 246),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.pink.withAlpha((0.15 * 255).round()),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                ),
+                icon: const Icon(Icons.photo_library, color: Colors.black),
+                label: const Text(
+                  'ดูรูปทั้งหมด',
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                ),
+                onPressed: () {
+                  Get.toNamed('/allimages', arguments: imageList);
+                },
+              ),
+            ),
+          ],
         ),
+        drawer: MyDrawer(imageList: imageList),
         body: Column(
           children: [
-            // GridView Section with images
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: SizedBox(
@@ -44,7 +80,7 @@ class MainApp extends StatelessWidget {
                     crossAxisSpacing: 12,
                     childAspectRatio: 1,
                   ),
-                  itemCount: imageList.length,
+                  itemCount: 8,
                   itemBuilder: (context, index) {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(12),
@@ -57,7 +93,6 @@ class MainApp extends StatelessWidget {
                 ),
               ),
             ),
-            // ListView Section
             Expanded(
               child: ListView.builder(
                 itemCount: 100,
@@ -82,9 +117,7 @@ class MainApp extends StatelessWidget {
                         Icons.arrow_forward_ios,
                         color: Color.fromARGB(255, 248, 151, 219),
                       ),
-                      onTap: () {
-                        // เพิ่ม action เมื่อกดแต่ละรายการได้ที่นี่
-                      },
+                      onTap: () {},
                     ),
                   );
                 },
